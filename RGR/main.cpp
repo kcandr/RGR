@@ -59,6 +59,15 @@ void koshi(int n)
 	v[0] = A / a0;
 	u[1] = (a1 * (1 + p[1] * h) - a0 * h * (1 + p[1] / h)) / (1 + p[1] * h + 0.5 * q[1] * pow(h, 2));
 	v[1] = (0.5 * f[1] * pow(h, 2) + A * (a1 / a0) * (1 + p[1] * h)) / (1 + p[1] * h + 0.5 * q[1] * pow(h, 2));
+	for (int i = 1; i < n; ++i) {
+		u[i+1] = ((2 - q[i] * pow(h, 2)) * u[i] - (1 - 0.5 * p[i] * h) * a0) / (1 + 0.5 * p[i] * h);
+		v[i+1] = ((2 - q[i] * pow(h, 2)) * v[i] - (1 - 0.5 * p[i] * h) * v[i-1] + f[i] * pow(h, 2)) / (1 + 0.5 * p[i] * h);
+	}
+	float ub = (3 * u[n] - 4 * u[n-1] + u[n-2]) / (2 * h);
+	float vb = (3 * v[n] - 4 * v[n-1] + v[n-2]) / (2 * h);
+	float cb = (B - (b0 * v[n] + b1 * vb)) / (b0 * u[n] + b1 * ub);
+	for (int i = 0; i < n; ++i)
+		y[i] = cb * u[i] + v[i];
 	print(n);
 	return;
 }
@@ -81,6 +90,10 @@ int main()
 		case 1:
 			progonka(10);
 			progonka(20);
+			break;
+		case 2:
+			koshi(10);
+			koshi(20);
 			break;
 		}
 	}
